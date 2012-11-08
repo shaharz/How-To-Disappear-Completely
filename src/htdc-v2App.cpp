@@ -47,6 +47,8 @@ private:
 	ParticleSystem		particleSystem;
     
     Perlin              perlin;
+    
+    Area                _validDepthArea = Area(13,44,598,480);
 };
 
 void htdcApp::setup()
@@ -162,9 +164,9 @@ void htdcApp::draw()
     gl::draw( bgTex, Vec2i( 640, 0 ) );
     
     if ( !_invisible ) {
-        gl::draw( imageTex, Vec2i( 0, 0 ) );
+        gl::draw( imageTex, _validDepthArea, Rectf(0,0,640,480) );
     } else {
-        gl::draw( bgTex, Vec2i( 0, 0 ) );
+        gl::draw( bgTex, _validDepthArea, Rectf(0,0,640,480) );
         particleSystem.updateAndDraw();
     }
 //    gl::drawStrokedRect(Rectf(0,480,640,480*2));
