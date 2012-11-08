@@ -8,6 +8,13 @@
 #include "GlslHotProg.h"
 #include "CinderOpenCV.h"
 
+#include "Particle.h"
+#include "ParticleSystem.h"
+#include "ciMsaFluidSolver.h"
+#include "ciMsaFluidDrawerGl.h"
+#include "cinder/Rand.h"
+#include "cinder/Perlin.h"
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -20,31 +27,68 @@ class htdcApp : public AppBasic {
 	void draw();
     void keyDown( KeyEvent event );
     
+    void blowAway();
+    
 private:
     V::OpenNIDeviceManager*	_manager;
 	V::OpenNIDevice::Ref	_device0;
     
-    cv::Mat _depth, _background, _mask;
+    cv::Mat _depth, _image, _background, _bgMask, _fgMask;
     
     bool _captureBackground = true;
     int _depthThresholdMm = 120;
     
+    bool _invisible = false;
+    
     cv::VideoCapture capture = cv::VideoCapture( CV_CAP_OPENNI );
+    
+    ciMsaFluidSolver	fluidSolver;
+	ciMsaFluidDrawerGl	fluidDrawer;
+	ParticleSystem		particleSystem;
+    
+    Perlin              perlin;
 };
 
 void htdcApp::setup()
 {
     setWindowSize( 1280, 900 );
-//    
-//    capture.grab();
-//    capture.retrieve( _background, CV_CAP_OPENNI_BGR_IMAGE );
+    particleSystem.setWindowSize( getWindowSize() );
+    
+    // setup fluid stuff
+	fluidSolver.setup(100, 100);
+    fluidSolver.enableRGB(false).setFadeSpeed(0.0002).setDeltaT(0.5).setVisc(0.000005).setColorDiffusion(0);
+    fluidSolver.setSize( 150 , 150 / getWindowAspectRatio() );
+	fluidDrawer.setup( &fluidSolver );
+	particleSystem.setFluidSolver( &fluidSolver );
+}
 
+void htdcApp::blowAway() {
+    _invisible = true;
+    particleSystem.reset();
+    
+    float n = cv::countNonZero( _fgMask );
+    float prob = MAX_PARTICLES / n;
+
+    for ( int i = 0; i < _fgMask.cols; i++ )
+    {
+        for ( int j = 0; j < _fgMask.rows; j++ )
+        {
+            if ( _fgMask.at<uchar>( j, i ) > 0 && randFloat() < prob ) {
+                particleSystem.addParticle( Vec2f( i, j ), _image.at<uchar>( j, i ) / 256.0f );
+            }
+        }
+    }
 }
 
 void htdcApp::keyDown( KeyEvent event ) {
     switch ( event.getCode() ) {
         case KeyEvent::KEY_SPACE:
             _captureBackground = true;
+            break;
+            
+        case KeyEvent::KEY_RETURN:
+            if ( _invisible ) _invisible = false;
+            else blowAway();
             break;
             
         case KeyEvent::KEY_UP:
@@ -65,28 +109,41 @@ void htdcApp::mouseDown( MouseEvent event )
 
 void htdcApp::update()
 {
-    static cv::Mat _tempColor, _tempDepth, _tempMask,
+    static cv::Mat _tempDepth,
                     _erodeElem = cv::getStructuringElement( cv::MORPH_ELLIPSE, cv::Size( 9, 9 ) );
     
     capture.grab();
     capture.retrieve( _tempDepth, CV_CAP_OPENNI_DEPTH_MAP );
-    capture.retrieve( _tempColor, CV_CAP_OPENNI_GRAY_IMAGE );
+    capture.retrieve( _image, CV_CAP_OPENNI_GRAY_IMAGE );
     
     if ( _captureBackground ) {
-        _tempColor.copyTo( _background );
+        _image.copyTo( _background );
         _captureBackground = false;
     }
 
     _tempDepth.convertTo( _depth, CV_8U, 1.0/54.0 );
 
     // TODO: switch to Mat::setTo
-    cv::threshold( _depth, _tempMask, 256 * _depthThresholdMm / 1400.0, 1, cv::THRESH_TOZERO_INV );
-    cv::threshold( _tempMask, _mask, 0, 255, cv::THRESH_BINARY_INV );
-    cv::erode( _mask, _mask, _erodeElem, cv::Point(-1,-1), 9 );
+    cv::threshold( _depth, _fgMask, 256 * _depthThresholdMm / 1400.0, 1, cv::THRESH_TOZERO_INV );
+    cv::threshold( _fgMask, _bgMask, 0, 255, cv::THRESH_BINARY_INV );
+    cv::erode( _bgMask, _bgMask, _erodeElem, cv::Point(-1,-1), 9 );
 
-    _tempColor.copyTo( _background, _mask );
+    _image.copyTo( _background, _bgMask );
     
 //    cv::blur( _tempColor, _background, cv::Size( 30, 3 ) );
+    
+    
+    // update fluid
+    for ( int y = 1; y < fluidSolver.getHeight(); y++ )
+    {
+        for ( int x = 1; x < fluidSolver.getWidth(); x++ )
+        {
+            float p = perlin.fBm( Vec3f( x, y, getElapsedSeconds() * 0.01f ) * 0.05f ) * 0.005f;
+            fluidSolver.addForceAtCell( x, y, Vec2f( Rand::randFloat(0.001f), p + Rand::randFloat( -0.005f, 0.005f ) ) );
+        }
+    }
+    
+	fluidSolver.update();
 }
 
 void htdcApp::draw()
@@ -97,16 +154,23 @@ void htdcApp::draw()
     gl::color( Color::white() );
     
     gl::Texture depthTex = gl::Texture( fromOcv( _depth ) );
-    gl::Texture maskTex = gl::Texture( fromOcv( _mask ) );
+    gl::Texture maskTex = gl::Texture( fromOcv( _bgMask ) );
     gl::Texture bgTex = gl::Texture( fromOcv( _background ) );
-	gl::draw( depthTex, Vec2i( 0, 0 ) );
-    gl::drawStrokedRect(Rectf(0,0,640,480));
-	gl::draw( maskTex, Vec2i( 640, 0 ) );
-    gl::drawStrokedRect(Rectf(640,0,640*2,480));
-    gl::draw( bgTex, Vec2i( 0, 480 ) );
-    gl::drawStrokedRect(Rectf(0,480,640,480*2));
+    gl::Texture imageTex = gl::Texture( fromOcv( _image ) );
+	gl::draw( depthTex, Vec2i( 0, 480 ) );
+	gl::draw( maskTex, Vec2i( 640, 480 ) );
+    gl::draw( bgTex, Vec2i( 640, 0 ) );
+    
+    if ( !_invisible ) {
+        gl::draw( imageTex, Vec2i( 0, 0 ) );
+    } else {
+        gl::draw( bgTex, Vec2i( 0, 0 ) );
+        particleSystem.updateAndDraw();
+    }
+//    gl::drawStrokedRect(Rectf(0,480,640,480*2));
     
     gl::drawString( toString( getAverageFps() ), Vec2f::one() * 30.0f );
+    
 }
 
 

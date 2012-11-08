@@ -17,6 +17,10 @@
 		00CCAF15116A9FEE008396D5 /* CinderApp.icns in Resources */ = {isa = PBXBuildFile; fileRef = 00CCAF14116A9FEE008396D5 /* CinderApp.icns */; };
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B50EAFCA7E003A9687 /* QTKit.framework */; };
+		539B5AAE164A1404001ECD18 /* ciMsaFluidDrawerGl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539B5A88164A1404001ECD18 /* ciMsaFluidDrawerGl.cpp */; };
+		539B5AAF164A1404001ECD18 /* ciMsaFluidSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539B5A89164A1404001ECD18 /* ciMsaFluidSolver.cpp */; };
+		539B5ABF164A1501001ECD18 /* Particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539B5ABD164A1501001ECD18 /* Particle.cpp */; };
+		539B5AC0164A1501001ECD18 /* ParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539B5ABE164A1501001ECD18 /* ParticleSystem.cpp */; };
 		53E3CDFC0E86099300238D2B /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E3CDFB0E86099300238D2B /* Carbon.framework */; };
 		53EC6CF41631DB9E0018593E /* VOpenNIDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EC6CBA1631DB9E0018593E /* VOpenNIDevice.cpp */; };
 		53EC6CF51631DB9E0018593E /* VOpenNIDeviceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EC6CBC1631DB9E0018593E /* VOpenNIDeviceManager.cpp */; };
@@ -45,6 +49,16 @@
 		32CA4F630368D1EE00C91783 /* htdc-v2_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "htdc-v2_Prefix.pch"; sourceTree = "<group>"; };
 		5323E6B10EAFCA74003A9687 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		5323E6B50EAFCA7E003A9687 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
+		539B5A49164A1404001ECD18 /* ciMsaFluid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciMsaFluid.h; sourceTree = "<group>"; };
+		539B5A4A164A1404001ECD18 /* ciMsaFluidDrawerGl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciMsaFluidDrawerGl.h; sourceTree = "<group>"; };
+		539B5A4B164A1404001ECD18 /* ciMsaFluidParticleUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciMsaFluidParticleUpdater.h; sourceTree = "<group>"; };
+		539B5A4C164A1404001ECD18 /* ciMsaFluidSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciMsaFluidSolver.h; sourceTree = "<group>"; };
+		539B5A88164A1404001ECD18 /* ciMsaFluidDrawerGl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ciMsaFluidDrawerGl.cpp; sourceTree = "<group>"; };
+		539B5A89164A1404001ECD18 /* ciMsaFluidSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ciMsaFluidSolver.cpp; sourceTree = "<group>"; };
+		539B5ABD164A1501001ECD18 /* Particle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Particle.cpp; path = ../src/Particle.cpp; sourceTree = "<group>"; };
+		539B5ABE164A1501001ECD18 /* ParticleSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleSystem.cpp; path = ../src/ParticleSystem.cpp; sourceTree = "<group>"; };
+		539B5AC1164A150B001ECD18 /* Particle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Particle.h; path = ../include/Particle.h; sourceTree = "<group>"; };
+		539B5AC2164A150B001ECD18 /* ParticleSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ParticleSystem.h; path = ../include/ParticleSystem.h; sourceTree = "<group>"; };
 		53E3CDFB0E86099300238D2B /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		53EC6CB71631DB9E0018593E /* SkeletonPoseDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkeletonPoseDetector.h; sourceTree = "<group>"; };
 		53EC6CB81631DB9E0018593E /* VOpenNIBone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VOpenNIBone.h; sourceTree = "<group>"; };
@@ -94,6 +108,8 @@
 		080E96DDFE201D6D7F000001 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				539B5ABD164A1501001ECD18 /* Particle.cpp */,
+				539B5ABE164A1501001ECD18 /* ParticleSystem.cpp */,
 				00BAE6590E7ED9C10018A608 /* htdc-v2App.cpp */,
 			);
 			name = Source;
@@ -150,6 +166,8 @@
 		29B97315FDCFA39411CA2CEA /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				539B5AC1164A150B001ECD18 /* Particle.h */,
+				539B5AC2164A150B001ECD18 /* ParticleSystem.h */,
 				32CA4F630368D1EE00C91783 /* htdc-v2_Prefix.pch */,
 			);
 			name = Headers;
@@ -173,9 +191,41 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		539B5A48164A1404001ECD18 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				539B5A49164A1404001ECD18 /* ciMsaFluid.h */,
+				539B5A4A164A1404001ECD18 /* ciMsaFluidDrawerGl.h */,
+				539B5A4B164A1404001ECD18 /* ciMsaFluidParticleUpdater.h */,
+				539B5A4C164A1404001ECD18 /* ciMsaFluidSolver.h */,
+			);
+			name = include;
+			path = ../../../blocks/msaFluid/include;
+			sourceTree = "<group>";
+		};
+		539B5A87164A1404001ECD18 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				539B5A88164A1404001ECD18 /* ciMsaFluidDrawerGl.cpp */,
+				539B5A89164A1404001ECD18 /* ciMsaFluidSolver.cpp */,
+			);
+			name = src;
+			path = ../../../blocks/msaFluid/src;
+			sourceTree = "<group>";
+		};
+		539B5AC3164A151C001ECD18 /* msaFluid */ = {
+			isa = PBXGroup;
+			children = (
+				539B5A87164A1404001ECD18 /* src */,
+				539B5A48164A1404001ECD18 /* include */,
+			);
+			name = msaFluid;
+			sourceTree = "<group>";
+		};
 		53EC6C701631DB8C0018593E /* Blocks */ = {
 			isa = PBXGroup;
 			children = (
+				539B5AC3164A151C001ECD18 /* msaFluid */,
 				53EC6D081631E41B0018593E /* Cinder-OpenCV */,
 				53EC6D021631E4130018593E /* Cinder-GlslHotProg */,
 				53EC6C711631DB9E0018593E /* BlockOpenNI */,
@@ -310,6 +360,10 @@
 				53EC6CF71631DB9E0018593E /* VOpenNIRecorder.cpp in Sources */,
 				53EC6CF81631DB9E0018593E /* VOpenNIUser.cpp in Sources */,
 				53EC6D061631E4130018593E /* GlslHotProg.cpp in Sources */,
+				539B5AAE164A1404001ECD18 /* ciMsaFluidDrawerGl.cpp in Sources */,
+				539B5AAF164A1404001ECD18 /* ciMsaFluidSolver.cpp in Sources */,
+				539B5ABF164A1501001ECD18 /* Particle.cpp in Sources */,
+				539B5AC0164A1501001ECD18 /* ParticleSystem.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,7 +373,6 @@
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_MODEL_TUNING = G5;
@@ -385,7 +438,6 @@
 					"-lopencv_video",
 				);
 				PRODUCT_NAME = "htdc-v2";
-				STRIP_INSTALLED_PRODUCT = YES;
 				USER_HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\"";
 				WRAPPER_EXTENSION = app;
 			};
@@ -399,6 +451,7 @@
 				CINDER_PATH = ../../..;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				COPY_PHASE_STRIP = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/boost\"";
@@ -417,6 +470,7 @@
 				CINDER_PATH = ../../..;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				COPY_PHASE_STRIP = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/boost\"";
