@@ -15,6 +15,7 @@
 #include "cinder/Rand.h"
 #include "cinder/Perlin.h"
 
+#include "cinder/audio/Input.h"
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -50,6 +51,8 @@ private:
     Perlin              perlin;
     
     Area                _validDepthArea = Area(13,44,598,480);
+    
+    audio::Input        _input;
 };
 
 void htdcApp::setup()
@@ -63,6 +66,10 @@ void htdcApp::setup()
     fluidSolver.setSize( 150 , 150 / getWindowAspectRatio() );
 	fluidDrawer.setup( &fluidSolver );
 	particleSystem.setFluidSolver( &fluidSolver );
+    
+    console() << audio::Input::getDefaultDevice()->getName() << endl;
+	_input = audio::Input();
+	_input.start();
 }
 
 void htdcApp::blowAway() {
@@ -151,6 +158,21 @@ void htdcApp::update()
     }
     
 	fluidSolver.update();
+    
+    audio::PcmBuffer32fRef pcmBuffer = _input.getPcmBuffer();
+    if ( pcmBuffer && pcmBuffer->getSampleCount() > 0 ) {
+        audio::Buffer32fRef leftBuffer = pcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
+        float* pcm = leftBuffer->mData;
+        int len = leftBuffer->mSampleCount;
+        float sumd0=0, sumd1=0;
+        
+        for( int n = 1; n < len; n++ )
+        {
+            sumd0+= math<float>::abs(pcm[n]);
+            sumd1+= math<float>::abs(pcm[n]-pcm[n-1]);
+        }
+        
+    }
 }
 
 void htdcApp::draw()
