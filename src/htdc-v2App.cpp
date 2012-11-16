@@ -20,9 +20,9 @@ using namespace ci::app;
 using namespace std;
 
 class htdcApp : public AppBasic {
-  public:
+public:
 	void setup();
-	void mouseDown( MouseEvent event );	
+	void mouseDown( MouseEvent event );
 	void update();
 	void draw();
     void keyDown( KeyEvent event );
@@ -39,6 +39,7 @@ private:
     int _depthThresholdMm = 120;
     
     bool _invisible = false;
+    double _lastInvisible = 0.0;
     
     cv::VideoCapture capture = cv::VideoCapture( CV_CAP_OPENNI );
     
@@ -66,11 +67,12 @@ void htdcApp::setup()
 
 void htdcApp::blowAway() {
     _invisible = true;
+    _lastInvisible = getElapsedSeconds();
     particleSystem.reset();
     
     float n = cv::countNonZero( _fgMask );
     float prob = MAX_PARTICLES / n;
-
+    
     for ( int i = 0; i < _fgMask.cols; i++ )
     {
         for ( int j = 0; j < _fgMask.rows; j++ )
@@ -112,7 +114,7 @@ void htdcApp::mouseDown( MouseEvent event )
 void htdcApp::update()
 {
     static cv::Mat _tempDepth,
-                    _erodeElem = cv::getStructuringElement( cv::MORPH_ELLIPSE, cv::Size( 9, 9 ) );
+    _erodeElem = cv::getStructuringElement( cv::MORPH_ELLIPSE, cv::Size( 9, 9 ) );
     
     capture.grab();
     capture.retrieve( _tempDepth, CV_CAP_OPENNI_DEPTH_MAP );
@@ -122,26 +124,29 @@ void htdcApp::update()
         _image.copyTo( _background );
         _captureBackground = false;
     }
-
+    
     _tempDepth.convertTo( _depth, CV_8U, 1.0/54.0 );
-
+    
     // TODO: switch to Mat::setTo
     cv::threshold( _depth, _fgMask, 256 * _depthThresholdMm / 1400.0, 1, cv::THRESH_TOZERO_INV );
     cv::threshold( _fgMask, _bgMask, 0, 255, cv::THRESH_BINARY_INV );
     cv::erode( _bgMask, _bgMask, _erodeElem, cv::Point(-1,-1), 9 );
-
+    
     _image.copyTo( _background, _bgMask );
     
-//    cv::blur( _tempColor, _background, cv::Size( 30, 3 ) );
+    //    cv::blur( _tempColor, _background, cv::Size( 30, 3 ) );
     
     
-    // update fluid
-    for ( int y = 1; y < fluidSolver.getHeight(); y++ )
-    {
-        for ( int x = 1; x < fluidSolver.getWidth(); x++ )
+    if ( _invisible ) {
+        float mag = math<float>::clamp( getElapsedSeconds() - .3f - _lastInvisible );
+        // update fluid
+        for ( int y = 1; y < fluidSolver.getHeight(); y++ )
         {
-            float p = perlin.fBm( Vec3f( x, y, getElapsedSeconds() * 0.01f ) * 0.05f ) * 0.005f;
-            fluidSolver.addForceAtCell( x, y, Vec2f( Rand::randFloat(0.001f), p + Rand::randFloat( -0.005f, 0.005f ) ) );
+            for ( int x = 1; x < fluidSolver.getWidth(); x++ )
+            {
+                float p = perlin.fBm( Vec3f( x, y, getElapsedSeconds() * 0.01f ) * 0.05f ) * 0.005f;
+                fluidSolver.addForceAtCell( x, y, Vec2f( Rand::randFloat(0.001f), p + Rand::randFloat( -0.005f, 0.005f ) ) * mag );
+            }
         }
     }
     
@@ -151,7 +156,7 @@ void htdcApp::update()
 void htdcApp::draw()
 {
 	// clear out the window with black
-	gl::clear( Color( 0, 0, 0 ) );
+	gl::clear( Color::black() );
     
     gl::color( Color::white() );
     
@@ -167,9 +172,13 @@ void htdcApp::draw()
         gl::draw( imageTex, _validDepthArea, Rectf(0,0,640,480) );
     } else {
         gl::draw( bgTex, _validDepthArea, Rectf(0,0,640,480) );
+        gl::pushMatrices();
+        gl::translate( -_validDepthArea.getUL() );
+        gl::scale( Vec2f(640,480) / _validDepthArea.getSize() );
         particleSystem.updateAndDraw();
+        gl::popMatrices();
     }
-//    gl::drawStrokedRect(Rectf(0,480,640,480*2));
+    //    gl::drawStrokedRect(Rectf(0,480,640,480*2));
     
     gl::drawString( toString( getAverageFps() ), Vec2f::one() * 30.0f );
     
