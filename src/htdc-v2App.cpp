@@ -75,7 +75,6 @@ void htdcApp::setup()
 void htdcApp::blowAway() {
     _invisible = true;
     _lastInvisible = getElapsedSeconds();
-    particleSystem.reset();
     
     float n = cv::countNonZero( _fgMask );
     float prob = MAX_PARTICLES / n;
