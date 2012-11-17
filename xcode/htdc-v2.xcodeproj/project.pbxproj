@@ -21,14 +21,14 @@
 		539B5AAF164A1404001ECD18 /* ciMsaFluidSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539B5A89164A1404001ECD18 /* ciMsaFluidSolver.cpp */; };
 		539B5ABF164A1501001ECD18 /* Particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539B5ABD164A1501001ECD18 /* Particle.cpp */; };
 		539B5AC0164A1501001ECD18 /* ParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539B5ABE164A1501001ECD18 /* ParticleSystem.cpp */; };
+		539E1A091656EF1F00912058 /* GlslHotProg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539E1A061656EF1F00912058 /* GlslHotProg.cpp */; };
+		539E1A0A1656EF1F00912058 /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = 539E1A081656EF1F00912058 /* README.txt */; };
 		53E3CDFC0E86099300238D2B /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E3CDFB0E86099300238D2B /* Carbon.framework */; };
 		53EC6CF41631DB9E0018593E /* VOpenNIDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EC6CBA1631DB9E0018593E /* VOpenNIDevice.cpp */; };
 		53EC6CF51631DB9E0018593E /* VOpenNIDeviceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EC6CBC1631DB9E0018593E /* VOpenNIDeviceManager.cpp */; };
 		53EC6CF61631DB9E0018593E /* VOpenNINetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EC6CBF1631DB9E0018593E /* VOpenNINetwork.cpp */; };
 		53EC6CF71631DB9E0018593E /* VOpenNIRecorder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EC6CC11631DB9E0018593E /* VOpenNIRecorder.cpp */; };
 		53EC6CF81631DB9E0018593E /* VOpenNIUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EC6CC41631DB9E0018593E /* VOpenNIUser.cpp */; };
-		53EC6D061631E4130018593E /* GlslHotProg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EC6D031631E4130018593E /* GlslHotProg.cpp */; };
-		53EC6D071631E4130018593E /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = 53EC6D051631E4130018593E /* README.txt */; };
 		53EC6EB91631E41E0018593E /* README in Resources */ = {isa = PBXBuildFile; fileRef = 53EC6DAC1631E41C0018593E /* README */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -59,6 +59,9 @@
 		539B5ABE164A1501001ECD18 /* ParticleSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleSystem.cpp; path = ../src/ParticleSystem.cpp; sourceTree = "<group>"; };
 		539B5AC1164A150B001ECD18 /* Particle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Particle.h; path = ../include/Particle.h; sourceTree = "<group>"; };
 		539B5AC2164A150B001ECD18 /* ParticleSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ParticleSystem.h; path = ../include/ParticleSystem.h; sourceTree = "<group>"; };
+		539E1A061656EF1F00912058 /* GlslHotProg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlslHotProg.cpp; sourceTree = "<group>"; };
+		539E1A071656EF1F00912058 /* GlslHotProg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlslHotProg.h; sourceTree = "<group>"; };
+		539E1A081656EF1F00912058 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		53E3CDFB0E86099300238D2B /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		53EC6CB71631DB9E0018593E /* SkeletonPoseDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkeletonPoseDetector.h; sourceTree = "<group>"; };
 		53EC6CB81631DB9E0018593E /* VOpenNIBone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VOpenNIBone.h; sourceTree = "<group>"; };
@@ -75,9 +78,6 @@
 		53EC6CC31631DB9E0018593E /* VOpenNISurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VOpenNISurface.h; sourceTree = "<group>"; };
 		53EC6CC41631DB9E0018593E /* VOpenNIUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VOpenNIUser.cpp; sourceTree = "<group>"; };
 		53EC6CC51631DB9E0018593E /* VOpenNIUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VOpenNIUser.h; sourceTree = "<group>"; };
-		53EC6D031631E4130018593E /* GlslHotProg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlslHotProg.cpp; sourceTree = "<group>"; };
-		53EC6D041631E4130018593E /* GlslHotProg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlslHotProg.h; sourceTree = "<group>"; };
-		53EC6D051631E4130018593E /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		53EC6D261631E41B0018593E /* CinderOpenCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CinderOpenCV.h; sourceTree = "<group>"; };
 		53EC6DAC1631E41C0018593E /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -222,12 +222,23 @@
 			name = msaFluid;
 			sourceTree = "<group>";
 		};
+		539E1A051656EF1F00912058 /* Cinder-GlslHotProg */ = {
+			isa = PBXGroup;
+			children = (
+				539E1A061656EF1F00912058 /* GlslHotProg.cpp */,
+				539E1A071656EF1F00912058 /* GlslHotProg.h */,
+				539E1A081656EF1F00912058 /* README.txt */,
+			);
+			name = "Cinder-GlslHotProg";
+			path = "../../../blocks/Cinder-GlslHotProg";
+			sourceTree = "<group>";
+		};
 		53EC6C701631DB8C0018593E /* Blocks */ = {
 			isa = PBXGroup;
 			children = (
+				539E1A051656EF1F00912058 /* Cinder-GlslHotProg */,
 				539B5AC3164A151C001ECD18 /* msaFluid */,
 				53EC6D081631E41B0018593E /* Cinder-OpenCV */,
-				53EC6D021631E4130018593E /* Cinder-GlslHotProg */,
 				53EC6C711631DB9E0018593E /* BlockOpenNI */,
 			);
 			name = Blocks;
@@ -262,17 +273,6 @@
 				53EC6CC51631DB9E0018593E /* VOpenNIUser.h */,
 			);
 			path = src;
-			sourceTree = "<group>";
-		};
-		53EC6D021631E4130018593E /* Cinder-GlslHotProg */ = {
-			isa = PBXGroup;
-			children = (
-				53EC6D031631E4130018593E /* GlslHotProg.cpp */,
-				53EC6D041631E4130018593E /* GlslHotProg.h */,
-				53EC6D051631E4130018593E /* README.txt */,
-			);
-			name = "Cinder-GlslHotProg";
-			path = "../../../blocks/Cinder-GlslHotProg";
 			sourceTree = "<group>";
 		};
 		53EC6D081631E41B0018593E /* Cinder-OpenCV */ = {
@@ -341,8 +341,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				00CCAF15116A9FEE008396D5 /* CinderApp.icns in Resources */,
-				53EC6D071631E4130018593E /* README.txt in Resources */,
 				53EC6EB91631E41E0018593E /* README in Resources */,
+				539E1A0A1656EF1F00912058 /* README.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -359,11 +359,11 @@
 				53EC6CF61631DB9E0018593E /* VOpenNINetwork.cpp in Sources */,
 				53EC6CF71631DB9E0018593E /* VOpenNIRecorder.cpp in Sources */,
 				53EC6CF81631DB9E0018593E /* VOpenNIUser.cpp in Sources */,
-				53EC6D061631E4130018593E /* GlslHotProg.cpp in Sources */,
 				539B5AAE164A1404001ECD18 /* ciMsaFluidDrawerGl.cpp in Sources */,
 				539B5AAF164A1404001ECD18 /* ciMsaFluidSolver.cpp in Sources */,
 				539B5ABF164A1501001ECD18 /* Particle.cpp in Sources */,
 				539B5AC0164A1501001ECD18 /* ParticleSystem.cpp in Sources */,
+				539E1A091656EF1F00912058 /* GlslHotProg.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -411,7 +411,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_FAST_MATH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 3;

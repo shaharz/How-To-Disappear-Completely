@@ -3,9 +3,10 @@
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
 
+#include "GlslHotProg.h"
+
 #include "VOpenNIHeaders.h"
 
-#include "GlslHotProg.h"
 #include "CinderOpenCV.h"
 
 #include "Particle.h"
@@ -14,6 +15,7 @@
 #include "ciMsaFluidDrawerGl.h"
 #include "cinder/Rand.h"
 #include "cinder/Perlin.h"
+#include "cinder/Timeline.h"
 
 #include "cinder/audio/Input.h"
 using namespace ci;
@@ -39,7 +41,6 @@ private:
     bool _captureBackground = true;
     int _depthThresholdMm = 120;
     
-    bool _invisible = false;
     double _lastInvisible = 0.0;
     
     cv::VideoCapture capture = cv::VideoCapture( CV_CAP_OPENNI );
@@ -53,6 +54,11 @@ private:
     Area                _validDepthArea = Area(13,44,598,480);
     
     audio::Input        _input;
+    
+    GlslHotProg         _shader;
+    gl::Texture         _distortTex;
+    
+    Anim<float>         _invisible = 0.0f;
 };
 
 void htdcApp::setup()
@@ -70,10 +76,16 @@ void htdcApp::setup()
     console() << audio::Input::getDefaultDevice()->getName() << endl;
 	_input = audio::Input();
 	_input.start();
+    
+    _distortTex = gl::Texture( loadImage( getAssetPath( "glitch.jpg" )));
+    _shader = GlslHotProg( "glitch.vert", "glitch.frag" );
 }
 
 void htdcApp::blowAway() {
-    _invisible = true;
+    if ( _invisible != 0.0f ) return;
+    
+    _invisible = 1.0f;
+    timeline().apply( &_invisible, 0.0f, 0.5f ).delay( 5.0f );
     _lastInvisible = getElapsedSeconds();
     
     float n = cv::countNonZero( _fgMask );
@@ -119,6 +131,8 @@ void htdcApp::mouseDown( MouseEvent event )
 
 void htdcApp::update()
 {
+    _shader.update();
+    
     static cv::Mat _tempDepth,
     _erodeElem = cv::getStructuringElement( cv::MORPH_ELLIPSE, cv::Size( 9, 9 ) );
     
@@ -143,7 +157,7 @@ void htdcApp::update()
     //    cv::blur( _tempColor, _background, cv::Size( 30, 3 ) );
     
     
-    if ( _invisible ) {
+    if ( _invisible > 0.0f ) {
         float mag = math<float>::clamp( getElapsedSeconds() - .3f - _lastInvisible );
         // update fluid
         for ( int y = 1; y < fluidSolver.getHeight(); y++ )
@@ -193,15 +207,31 @@ void htdcApp::draw()
 	gl::draw( maskTex, Vec2i( 640, 480 ) );
     gl::draw( bgTex, Vec2i( 640, 0 ) );
     
-    if ( !_invisible ) {
-        gl::draw( imageTex, _validDepthArea, Rectf(0,0,640,480) );
-    } else {
+    if ( _invisible == 1.0f ) {
         gl::draw( bgTex, _validDepthArea, Rectf(0,0,640,480) );
         gl::pushMatrices();
         gl::translate( -_validDepthArea.getUL() );
         gl::scale( Vec2f(640,480) / _validDepthArea.getSize() );
         particleSystem.updateAndDraw();
         gl::popMatrices();
+    } else {
+        
+        if ( _invisible > 0.0f || Rand::randFloat() < 0.005f ) {
+            _shader->bind();
+            _shader->uniform( "tex0", 0 );
+            _distortTex.bind( 1 );
+            _shader->uniform( "tex1", 1 );
+            _shader->uniform( "texdim0", imageTex.getSize());
+            _shader->uniform( "barsamount", Rand::randFloat(0.1f) );
+            _shader->uniform( "distortion", 0.1f );
+            _shader->uniform( "resolution", Rand::randInt(100) );
+            _shader->uniform( "vsync", Rand::randFloat(0.5f) );
+            _shader->uniform( "hsync", 0.0f );
+        }
+        
+        gl::draw( imageTex, _validDepthArea, Rectf(0,0,640,480) );
+        _distortTex.unbind();
+        _shader->unbind();
     }
     //    gl::drawStrokedRect(Rectf(0,480,640,480*2));
     
