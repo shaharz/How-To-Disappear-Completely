@@ -171,6 +171,10 @@ void htdcApp::update()
             sumd1+= math<float>::abs(pcm[n]-pcm[n-1]);
         }
         
+        if ( sumd0 > 1300.0f && sumd1/sumd0 < 0.15f) {
+            console() << "NOISE" << std::endl;
+            blowAway();
+        }
     }
 }
 
