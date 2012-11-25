@@ -16,6 +16,7 @@
 #include "cinder/Rand.h"
 #include "cinder/Perlin.h"
 #include "cinder/Timeline.h"
+#include "cinder/params/Params.h"
 
 #include "cinder/audio/Input.h"
 using namespace ci;
@@ -59,11 +60,40 @@ private:
     gl::Texture         _distortTex;
     
     Anim<float>         _invisible = 0.0f;
+    
+    float                _randomGustProb = 0.02f;
+
+    float               _d0 = 1300.0f, _d1 = 0.15f;
+    
+    float               _invisibleTime = 10.0f;
+    float               _noiseProbability = 0.005f;
+    
+    
+    bool                _isFlipped = true;
+    
+    int                 _backgroundDelta = 3;
+    
+    float               _x = -100.0f;
+    
+    params::InterfaceGl _params;
 };
 
 void htdcApp::setup()
 {
     setWindowSize( 1280, 900 );
+    _params = params::InterfaceGl( "htdc", Vec2i( 0, 480 ) );
+    _params.addParam( "Distance Threshold (mm)", &_depthThresholdMm );
+    _params.addParam( "Invisibility Time (sec)", &_invisibleTime );
+    _params.addParam( "Random Gust Probability", &_randomGustProb, "min=0.0 max=1.0 step=0.001" );
+    _params.addParam( "Noise Probability", &_noiseProbability, "min=0.0 max=1.0 step=0.001" );
+    _params.addParam( "Background Delta", &_backgroundDelta );
+    _params.addParam( "Flip Image", &_isFlipped );
+    _params.addParam( "Offset X", &_x );
+    _params.addSeparator( "Audio" );
+    _params.addParam( "d0", &_d0 );
+    _params.addParam( "d1", &_d1 );
+    _params.hide();
+    
     particleSystem.setWindowSize( getWindowSize() );
     
     // setup fluid stuff
@@ -85,7 +115,7 @@ void htdcApp::blowAway() {
     if ( _invisible != 0.0f ) return;
     
     _invisible = 1.0f;
-    timeline().apply( &_invisible, 0.0f, 0.5f ).delay( 5.0f );
+    timeline().apply( &_invisible, 0.0f, 0.5f ).delay( _invisibleTime );
     _lastInvisible = getElapsedSeconds();
     
     float n = cv::countNonZero( _fgMask );
@@ -122,6 +152,10 @@ void htdcApp::keyDown( KeyEvent event ) {
             _depthThresholdMm--;
             console() << _depthThresholdMm << endl;
             break;
+        case KeyEvent::KEY_p:
+            if ( _params.isVisible() ) { _params.hide(); hideCursor(); }
+            else { _params.show(); showCursor(); }
+            
     }
 }
 
@@ -185,7 +219,7 @@ void htdcApp::update()
             sumd1+= math<float>::abs(pcm[n]-pcm[n-1]);
         }
         
-        if ( sumd0 > 1300.0f && sumd1/sumd0 < 0.15f) {
+        if ( sumd0 > _d0 && sumd1/sumd0 < _d1) {
             console() << "NOISE" << std::endl;
             blowAway();
         }
@@ -216,7 +250,7 @@ void htdcApp::draw()
         gl::popMatrices();
     } else {
         
-        if ( _invisible > 0.0f || Rand::randFloat() < 0.005f ) {
+        if ( _invisible > 0.0f || Rand::randFloat() < _noiseProbability ) {
             _shader->bind();
             _shader->uniform( "tex0", 0 );
             _distortTex.bind( 1 );
@@ -237,6 +271,10 @@ void htdcApp::draw()
     
     gl::drawString( toString( getAverageFps() ), Vec2f::one() * 30.0f );
     
+    if ( _params.isVisible() ) {
+        gl::drawString( toString( getAverageFps() ), Vec2f::one() * 30.0f );
+        params::InterfaceGl::draw();
+    }
 }
 
 
