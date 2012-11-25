@@ -81,7 +81,6 @@ private:
 
 void htdcApp::setup()
 {
-    setWindowSize( 1280, 900 );
     _params = params::InterfaceGl( "htdc", Vec2i( 0, 480 ) );
     _params.addParam( "Distance Threshold (mm)", &_depthThresholdMm );
     _params.addParam( "Invisibility Time (sec)", &_invisibleTime );
@@ -94,6 +93,11 @@ void htdcApp::setup()
     _params.addParam( "d0", &_d0 );
     _params.addParam( "d1", &_d1 );
     _params.hide();
+    
+    setWindowSize( 1280, 720 );
+    setFullScreen( true );
+    hideCursor();
+    
     
     particleSystem.setWindowSize( getWindowSize() );
     
@@ -155,9 +159,22 @@ void htdcApp::keyDown( KeyEvent event ) {
             _depthThresholdMm--;
             console() << _depthThresholdMm << endl;
             break;
+            
+        case KeyEvent::KEY_f:
+            setFullScreen( !isFullScreen() );
+            break;
+            
         case KeyEvent::KEY_p:
             if ( _params.isVisible() ) { _params.hide(); hideCursor(); }
             else { _params.show(); showCursor(); }
+            
+        case KeyEvent::KEY_LEFT:
+            _x--;
+            break;
+            
+        case KeyEvent::KEY_RIGHT:
+            _x++;
+            break;
             
     }
 }
@@ -177,17 +194,15 @@ void htdcApp::update()
     capture.retrieve( _tempDepth, CV_CAP_OPENNI_DEPTH_MAP );
     capture.retrieve( _image, CV_CAP_OPENNI_GRAY_IMAGE );
     
+    _tempDepth.convertTo( _depth, CV_8U, 1.0/54.0 );
+    
     if ( _captureBackground ) {
         _image.copyTo( _background );
         _depth.copyTo( _backgroundDepth );
         _captureBackground = false;
     }
     
-    _tempDepth.convertTo( _depth, CV_8U, 1.0/54.0 );
-    
     // TODO: switch to Mat::setTo
-    cv::threshold( _depth, _fgMask, 256 * _depthThresholdMm / 1400.0, 1, cv::THRESH_TOZERO_INV );
-    cv::threshold( _fgMask, _bgMask, 0, 255, cv::THRESH_BINARY_INV );
 //    cv::threshold( _depth, _fgMask, 256 * _depthThresholdMm / 1400.0, 1, cv::THRESH_TOZERO_INV );
 //    cv::threshold( _fgMask, _bgMask, 0, 255, cv::THRESH_BINARY_INV );
     _depth.setTo( 255, _depth == 0 );
@@ -246,14 +261,26 @@ void htdcApp::draw()
 	gl::clear( Color::black() );
     
     gl::color( Color::white() );
-    
+
     gl::Texture depthTex = gl::Texture( fromOcv( _depth ) );
     gl::Texture maskTex = gl::Texture( fromOcv( _bgMask ) );
     gl::Texture bgTex = gl::Texture( fromOcv( _background ) );
     gl::Texture imageTex = gl::Texture( fromOcv( _image ) );
-	gl::draw( depthTex, Vec2i( 0, 480 ) );
-	gl::draw( maskTex, Vec2i( 640, 480 ) );
-    gl::draw( bgTex, Vec2i( 640, 0 ) );
+    
+    gl::pushMatrices();
+
+    if ( _params.isVisible() ) {
+        gl::draw( depthTex, Rectf( 0, 480, 320, 480+240 ) );
+        gl::draw( bgTex, Rectf( 640, 0, 640+320, 0+240 ) );
+        gl::draw( maskTex, Rectf( 640, 240, 640+320, 480 ) );
+    } else {
+        if ( _isFlipped ) {
+            gl::scale( 2.0f, -2.0f );
+            gl::translate( _x, -getWindowHeight() * .5f );
+        } else {
+            gl::scale( 2.0f, 2.0f );
+        }
+    }
     
     if ( _invisible == 1.0f ) {
         gl::draw( bgTex, _validDepthArea, Rectf(0,0,640,480) );
@@ -281,9 +308,8 @@ void htdcApp::draw()
         _distortTex.unbind();
         _shader->unbind();
     }
-    //    gl::drawStrokedRect(Rectf(0,480,640,480*2));
     
-    gl::drawString( toString( getAverageFps() ), Vec2f::one() * 30.0f );
+    gl::popMatrices();
     
     if ( _params.isVisible() ) {
         gl::drawString( toString( getAverageFps() ), Vec2f::one() * 30.0f );
