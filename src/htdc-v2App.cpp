@@ -68,6 +68,7 @@ private:
     float               _invisibleTime = 10.0f;
     float               _noiseProbability = 0.005f;
     
+    double              _lastGust = 0.0;
     
     bool                _isFlipped = true;
     
@@ -130,6 +131,8 @@ void htdcApp::blowAway() {
             }
         }
     }
+    
+    _lastGust = getElapsedSeconds();
 }
 
 void htdcApp::keyDown( KeyEvent event ) {
@@ -229,6 +232,11 @@ void htdcApp::update()
             console() << "NOISE" << std::endl;
             blowAway();
         }
+    }
+    
+    if ( _randomGustProb > 0.0f && _invisible == 0.0f
+        && ((getElapsedSeconds() - _lastGust) > 30.0) && Rand::randFloat() < _randomGustProb ) {
+        blowAway();
     }
 }
 
