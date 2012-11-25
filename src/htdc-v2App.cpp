@@ -37,7 +37,7 @@ private:
     V::OpenNIDeviceManager*	_manager;
 	V::OpenNIDevice::Ref	_device0;
     
-    cv::Mat _depth, _image, _background, _bgMask, _fgMask;
+    cv::Mat _depth, _image, _background, _bgMask, _fgMask, _backgroundDepth;
     
     bool _captureBackground = true;
     int _depthThresholdMm = 120;
@@ -176,6 +176,7 @@ void htdcApp::update()
     
     if ( _captureBackground ) {
         _image.copyTo( _background );
+        _depth.copyTo( _backgroundDepth );
         _captureBackground = false;
     }
     
@@ -184,6 +185,11 @@ void htdcApp::update()
     // TODO: switch to Mat::setTo
     cv::threshold( _depth, _fgMask, 256 * _depthThresholdMm / 1400.0, 1, cv::THRESH_TOZERO_INV );
     cv::threshold( _fgMask, _bgMask, 0, 255, cv::THRESH_BINARY_INV );
+//    cv::threshold( _depth, _fgMask, 256 * _depthThresholdMm / 1400.0, 1, cv::THRESH_TOZERO_INV );
+//    cv::threshold( _fgMask, _bgMask, 0, 255, cv::THRESH_BINARY_INV );
+    _depth.setTo( 255, _depth == 0 );
+    _fgMask = (_depth < (_backgroundDepth - _backgroundDelta));
+    _bgMask = 255 - _fgMask;
     cv::erode( _bgMask, _bgMask, _erodeElem, cv::Point(-1,-1), 9 );
     
     _image.copyTo( _background, _bgMask );
